@@ -15,6 +15,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  test_api: 0.4.8
+
 flutter:
   plugin:
     androidPackage: com.klarna.inapp.sdk.flutter_klarna_inapp_sdk

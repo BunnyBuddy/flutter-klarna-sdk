@@ -121,7 +121,7 @@ class _MyAppState extends State<MyApp> {
                             children: <Widget>[
                               Text(
                                 "PostPurchaseExperience.initialize",
-                                style: Theme.of(context).textTheme.subtitle,
+                                style: Theme.of(context).textTheme.subtitle1,
                               ),
                               TextFormField(
                                 controller: localeController,
@@ -172,7 +172,7 @@ class _MyAppState extends State<MyApp> {
                             children: <Widget>[
                               Text(
                                 "PostPurchaseExperience.authorizationRequest",
-                                style: Theme.of(context).textTheme.subtitle,
+                                style: Theme.of(context).textTheme.subtitle1,
                               ),
                               TextFormField(
                                 controller: clientIdController,
@@ -206,7 +206,7 @@ class _MyAppState extends State<MyApp> {
                             children: <Widget>[
                               Text(
                                 "PostPurchaseExperience.renderOperation",
-                                style: Theme.of(context).textTheme.subtitle,
+                                style: Theme.of(context).textTheme.subtitle1,
                               ),
                               TextFormField(
                                 controller: operationTokenController,
@@ -227,7 +227,7 @@ class _MyAppState extends State<MyApp> {
                             children: <Widget>[
                               Text(
                                 "PostPurchaseExperience.destroy",
-                                style: Theme.of(context).textTheme.subtitle,
+                                style: Theme.of(context).textTheme.subtitle1,
                               ),
                               MaterialButton(
                                 color: Theme.of(context).accentColor,
