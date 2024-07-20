@@ -17,9 +17,9 @@ internal class WebViewManager {
 
         internal fun notInitialized(result: MethodChannel.Result?) {
             result?.error(
-                    ResultError.WEB_VIEW_ERROR.errorCode,
-                    NOT_INITIALIZED,
-                    "Call 'initialize' before using this method."
+                ResultError.WEB_VIEW_ERROR.errorCode,
+                NOT_INITIALIZED,
+                "Call 'initialize' before using this method."
             )
         }
     }
@@ -33,7 +33,8 @@ internal class WebViewManager {
 
     fun initialize(result: MethodChannel.Result?) {
         if (webView == null) {
-            webView = WebView(PluginContext.activity)
+//            webView = WebView(PluginContext.activity)
+            val activity = requireNotNull(PluginContext.activity) { "Activity is not available" }
             addToActivityIfDetached()
             result?.success(null)
             return
@@ -111,8 +112,8 @@ internal class WebViewManager {
         PluginContext.activity?.let {
             if (webView?.parent == null) {
                 val params: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
                 )
 
                 webView?.visibility = View.GONE

@@ -56,29 +56,78 @@ internal class PostPurchaseExperienceManager {
 
         val webView = webViewManager.requireWebView()
         webView.webChromeClient = WebChromeClient()
-        webView.webViewClient = webViewClient
-        webView.settings.javaScriptEnabled = true
-        webView.settings.domStorageEnabled = true
-        webView.visibility = View.INVISIBLE
-        webView.setBackgroundColor(Color.TRANSPARENT)
 
-        webView.addJavascriptInterface(jsInterface, "PPECallback")
+        val client = webViewClient
+        if (client != null) {
+            webView.webViewClient = client
+            webView.settings.javaScriptEnabled = true
+            webView.settings.domStorageEnabled = true
+            webView.visibility = View.INVISIBLE
+            webView.setBackgroundColor(Color.TRANSPARENT)
+            webView.addJavascriptInterface(jsInterface, "PPECallback")
 
-        if (method.sdkSource.isNullOrBlank()) {
-            webView.loadUrl("file:///android_asset/ppe.html")
+            if (method.sdkSource.isNullOrBlank()) {
+                webView.loadUrl("file:///android_asset/ppe.html")
+            } else {
+                AssetManager.readAsset("ppe.html")?.let { html ->
+                    html.replace("https://x.klarnacdn.net/postpurchaseexperience/lib/v1/sdk.js", method.sdkSource).let {
+                        webView.loadData(it, null, null)
+                    }
+                } ?: webView.loadUrl("file:///android_asset/ppe.html")
+            }
+
+            initResult = result
+            initialized = false
+            val initScript = "initialize(${method.locale.jsScriptString()}, ${method.purchaseCountry.jsScriptString()}, ${method.design.jsScriptString()})"
+            client.queueJS(webViewManager, initScript)
         } else {
-            AssetManager.readAsset("ppe.html")?.let { html ->
-                html.replace("https://x.klarnacdn.net/postpurchaseexperience/lib/v1/sdk.js", method.sdkSource).let {
-                    webView.loadData(it, null, null)
-                }
-            } ?: webView.loadUrl("file:///android_asset/ppe.html")
+            result?.error(ResultError.POST_PURCHASE_ERROR.errorCode, "WebView not found.", null)
+            return
         }
-
-        initResult = result
-        initialized = false
-        val initScript = "initialize(${method.locale.jsScriptString()}, ${method.purchaseCountry.jsScriptString()}, ${method.design.jsScriptString()})"
-        webViewClient?.queueJS(webViewManager, initScript)
     }
+
+//    fun initialize(method: PostPurchaseExperienceMethod.Initialize, result: MethodChannel.Result?) {
+//        if (webViewManager.webView != null || initialized) {
+//            result?.error(ResultError.POST_PURCHASE_ERROR.errorCode, "Already initialized.", null)
+//            return
+//        }
+//
+//        val hybridSDK = KlarnaHybridSDKHandler.hybridSDK
+//        if (hybridSDK != null) {
+//            webViewClient = PostPurchaseExperienceWebViewClient(hybridSDK)
+//        } else {
+//            KlarnaHybridSDKHandler.notInitialized(result)
+//            return
+//        }
+//
+//        webViewManager.initialize(null)
+//        webViewManager.addToHybridSdk(null)
+//
+//        val webView = webViewManager.requireWebView()
+//        webView.webChromeClient = WebChromeClient()
+//        webView.webViewClient = webViewClient
+//        webView.settings.javaScriptEnabled = true
+//        webView.settings.domStorageEnabled = true
+//        webView.visibility = View.INVISIBLE
+//        webView.setBackgroundColor(Color.TRANSPARENT)
+//
+//        webView.addJavascriptInterface(jsInterface, "PPECallback")
+//
+//        if (method.sdkSource.isNullOrBlank()) {
+//            webView.loadUrl("file:///android_asset/ppe.html")
+//        } else {
+//            AssetManager.readAsset("ppe.html")?.let { html ->
+//                html.replace("https://x.klarnacdn.net/postpurchaseexperience/lib/v1/sdk.js", method.sdkSource).let {
+//                    webView.loadData(it, null, null)
+//                }
+//            } ?: webView.loadUrl("file:///android_asset/ppe.html")
+//        }
+//
+//        initResult = result
+//        initialized = false
+//        val initScript = "initialize(${method.locale.jsScriptString()}, ${method.purchaseCountry.jsScriptString()}, ${method.design.jsScriptString()})"
+//        webViewClient?.queueJS(webViewManager, initScript)
+//    }
 
     fun destroy(method: PostPurchaseExperienceMethod.Destroy, result: MethodChannel.Result?) {
         webViewManager.destroy(null)
