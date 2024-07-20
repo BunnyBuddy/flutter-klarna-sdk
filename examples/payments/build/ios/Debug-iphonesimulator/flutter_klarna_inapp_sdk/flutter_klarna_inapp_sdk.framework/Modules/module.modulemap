@@ -1,0 +1,11 @@
+framework module flutter_klarna_inapp_sdk {
+  umbrella header "flutter_klarna_inapp_sdk-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module flutter_klarna_inapp_sdk.Swift {
+  header "flutter_klarna_inapp_sdk-Swift.h"
+  requires objc
+}
